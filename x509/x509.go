@@ -15,7 +15,6 @@ import (
 	"crypto/sha1"
 	_ "crypto/sha256"
 	_ "crypto/sha512"
-	"crypto/x509/pkix"
 	"encoding/asn1"
 	"encoding/pem"
 	"errors"
@@ -24,6 +23,8 @@ import (
 	"net"
 	"strconv"
 	"time"
+
+	"github.com/zmap/ztools/x509/pkix"
 )
 
 // pkixPublicKey reflects a PKIX public key structure. See SubjectPublicKeyInfo
