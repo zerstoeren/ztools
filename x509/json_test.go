@@ -3,10 +3,10 @@ package x509
 import (
 	"encoding/json"
 	"encoding/pem"
+	"fmt"
 	"io/ioutil"
 	"testing"
 
-	"github.com/zmap/ztools/zlog"
 	. "gopkg.in/check.v1"
 )
 
@@ -34,5 +34,5 @@ func (s *JSONSuite) SetUpTest(c *C) {
 func (s *JSONSuite) TestEncodeCertificate(c *C) {
 	b, err := json.Marshal(s.parsedCert)
 	c.Assert(err, IsNil)
-	zlog.Info(string(b))
+	fmt.Println(string(b))
 }

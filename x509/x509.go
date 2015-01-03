@@ -168,7 +168,23 @@ const (
 	ECDSAWithSHA256
 	ECDSAWithSHA384
 	ECDSAWithSHA512
+	total_signature_algorithms
 )
+
+var signatureAlgorithmNames = []string{
+	"unknown_algorithm",
+	"MD2WithRSA",
+	"MD5WithRSA",
+	"SHA1WithRSA",
+	"SHA384WithRSA",
+	"SHA512WithRSA",
+	"DSAWithSHA1",
+	"DSAWithSHA256",
+	"ECDSAWithSHA1",
+	"ECDSAWithSHA256",
+	"ECDSAWitHSHA384",
+	"ECDSAWithSHA512",
+}
 
 type PublicKeyAlgorithm int
 
@@ -177,7 +193,15 @@ const (
 	RSA
 	DSA
 	ECDSA
+	total_key_algorithms
 )
+
+var keyAlgorithmNames = []string{
+	"unknown_algorithm",
+	"RSA",
+	"DSA",
+	"ECDSA",
+}
 
 // OIDs for signature algorithms
 //
