@@ -1,6 +1,9 @@
 package x509
 
 import (
+	"crypto/dsa"
+	"crypto/ecdsa"
+	"crypto/rsa"
 	"encoding/json"
 	"fmt"
 	"math/big"
@@ -35,7 +38,8 @@ type jsonValidity struct {
 }
 
 type jsonSubjectKeyInfo struct {
-	KeyAlgorithm PublicKeyAlgorithm `json:"key_algorithm"`
+	KeyAlgorithm PublicKeyAlgorithm     `json:"key_algorithm"`
+	PublicKey    map[string]interface{} `json:"public_key"`
 }
 
 func (jv *jsonValidity) MarshalJSON() ([]byte, error) {
@@ -43,9 +47,6 @@ func (jv *jsonValidity) MarshalJSON() ([]byte, error) {
 	end := jv.NotAfter.Format(time.RFC3339)
 	s := fmt.Sprintf(`{"start":"%s","end":"%s"}`, start, end)
 	return []byte(s), nil
-}
-
-type jsonSignature struct {
 }
 
 type jsonTBSCertificate struct {
@@ -58,10 +59,17 @@ type jsonTBSCertificate struct {
 	SubjectKeyInfo     jsonSubjectKeyInfo `json:"subject_key_info"`
 }
 
+type jsonSignature struct {
+	Value      []byte `json:"value"`
+	Valid      bool   `json:"valid"`
+	Matches    *bool  `json:"matches_domain"`
+	SelfSigned bool   `json:"self_signed"`
+}
+
 type jsonCertificate struct {
-	Certificate jsonTBSCertificate `json:"certificate"`
-	Algorithm   SignatureAlgorithm `json:"signature_algorithm"`
-	Signature   jsonSignature      `json:"signature"`
+	Certificate        jsonTBSCertificate `json:"certificate"`
+	SignatureAlgorithm SignatureAlgorithm `json:"signature_algorithm"`
+	Signature          jsonSignature      `json:"signature"`
 }
 
 func (c *Certificate) MarshalJSON() ([]byte, error) {
@@ -74,5 +82,44 @@ func (c *Certificate) MarshalJSON() ([]byte, error) {
 	jc.Certificate.Validity.NotAfter = c.NotAfter
 	jc.Certificate.Subject = c.Subject
 	jc.Certificate.SubjectKeyInfo.KeyAlgorithm = c.PublicKeyAlgorithm
+
+	// Pull out the key
+	keyMap := make(map[string]interface{})
+	switch c.PublicKeyAlgorithm {
+	case RSA:
+		rsaKey, ok := c.PublicKey.(*rsa.PublicKey)
+		if ok {
+			keyMap["modulus"] = rsaKey.N
+			keyMap["exponent"] = rsaKey.E
+		}
+	case DSA:
+		dsaKey, ok := c.PublicKey.(*dsa.PublicKey)
+		if ok {
+			keyMap["p"] = dsaKey.P
+			keyMap["q"] = dsaKey.Q
+			keyMap["g"] = dsaKey.G
+			keyMap["y"] = dsaKey.Y
+		}
+	case ECDSA:
+		ecdsaKey, ok := c.PublicKey.(*ecdsa.PublicKey)
+		if ok {
+			params := ecdsaKey.Params()
+			keyMap["P"] = params.P
+			keyMap["N"] = params.N
+			keyMap["B"] = params.B
+			keyMap["Gx"] = params.Gx
+			keyMap["Gy"] = params.Gy
+			keyMap["X"] = ecdsaKey.X
+			keyMap["Y"] = ecdsaKey.Y
+		}
+	}
+	jc.Certificate.SubjectKeyInfo.PublicKey = keyMap
+	// TODO: Handle the fact this might not match
+	jc.SignatureAlgorithm = c.SignatureAlgorithm
+	jc.Signature.Value = c.Signature
+	jc.Signature.Valid = c.valid
+	if c.Subject.CommonName == c.Issuer.CommonName {
+		jc.Signature.SelfSigned = true
+	}
 	return json.Marshal(jc)
 }

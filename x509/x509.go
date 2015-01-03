@@ -545,6 +545,10 @@ type Certificate struct {
 	CRLDistributionPoints []string
 
 	PolicyIdentifiers []asn1.ObjectIdentifier
+
+	// Internal
+	valid         bool
+	matchesDomain bool
 }
 
 // ErrUnsupportedAlgorithm results from attempting to perform an operation that
