@@ -3,7 +3,7 @@
 	"certificate": {
 		"version": 3,
 		"serial_number": 123893,
-		"algorithm": {
+		"signature_algorithm": {
 			"id": 123,
 			"name": "SHA1"
 		},
@@ -37,7 +37,7 @@
 			}
 		},
 		"extensions": [
-			{ 
+			{
 				"id": 345,
 				"name": "Certificate Basic Constraints",
 				"is_ca": false
@@ -62,4 +62,3 @@
 		"matches_domain": null
 	}
 }
-

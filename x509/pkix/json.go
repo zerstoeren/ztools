@@ -121,7 +121,7 @@ func (n *Name) MarshalJSON() ([]byte, error) {
 	for _, attrSet := range attrs {
 		attrs := []AttributeTypeAndValue(attrSet)
 		for _, a := range attrs {
-			if reflect.DeepEqual(a.Type, oidCommonName) {
+			if reflect.DeepEqual(a.Type, asn1.ObjectIdentifier(oidCommonName)) {
 				continue
 			}
 			ja := toJSONAttribute(&a)
