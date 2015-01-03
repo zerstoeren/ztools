@@ -11,11 +11,12 @@ package main
 
 import (
 	"crypto/rand"
-	"crypto/x509"
-	"crypto/x509/pkix"
 	"encoding/pem"
 	"math/big"
 	"time"
+
+	"github.com/zmap/ztools/x509"
+	"github.com/zmap/ztools/x509/pkix"
 )
 
 func main() {

@@ -5,8 +5,9 @@
 package x509_test
 
 import (
-	"crypto/x509"
 	"encoding/pem"
+
+	"github.com/zmap/ztools/x509"
 )
 
 func ExampleCertificate_Verify() {

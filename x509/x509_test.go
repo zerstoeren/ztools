@@ -13,7 +13,6 @@ import (
 	"crypto/rsa"
 	_ "crypto/sha256"
 	_ "crypto/sha512"
-	"crypto/x509/pkix"
 	"encoding/asn1"
 	"encoding/base64"
 	"encoding/hex"
@@ -25,6 +24,8 @@ import (
 	"runtime"
 	"testing"
 	"time"
+
+	"github.com/zmap/ztools/x509/pkix"
 )
 
 func TestParsePKCS1PrivateKey(t *testing.T) {

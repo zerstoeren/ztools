@@ -5,13 +5,14 @@
 package x509
 
 import (
-	"crypto/x509/pkix"
 	"encoding/pem"
 	"errors"
 	"runtime"
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/zmap/ztools/x509/pkix"
 )
 
 type verifyTest struct {
