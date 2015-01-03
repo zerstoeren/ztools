@@ -4,10 +4,9 @@ import (
 	"encoding/asn1"
 	"encoding/hex"
 	"encoding/json"
+	"fmt"
 	"reflect"
 	"regexp"
-
-	"github.com/zmap/ztools/zlog"
 )
 
 type jsonName struct {
@@ -18,6 +17,27 @@ type jsonName struct {
 type jsonAttribute struct {
 	Name  string      `json:"name"`
 	Value interface{} `json:"value"`
+}
+
+func (ja *jsonAttribute) MarshalJSON() ([]byte, error) {
+	enc := make(map[string]interface{})
+	enc[ja.Name] = ja.Value
+	return json.Marshal(enc)
+}
+
+func (ja *jsonAttribute) UnmarshalJSON(b []byte) error {
+	dec := make(map[string]interface{})
+	if err := json.Unmarshal(b, &dec); err != nil {
+		return err
+	}
+	if len(dec) != 1 {
+		return fmt.Errorf("Attribute has %d keys, expected only 1", len(dec))
+	}
+	for key, val := range dec {
+		ja.Name = key
+		ja.Value, _ = val.(string)
+	}
+	return nil
 }
 
 var unknownNameRegex = regexp.MustCompile(`unknown_attribute_(\d+)`)
@@ -88,6 +108,7 @@ func fromJSONAttribute(ja jsonAttribute) (a AttributeTypeAndValue) {
 			}
 		}
 	}
+	a.Value = ja.Value
 	return
 }
 
@@ -97,7 +118,6 @@ func (n *Name) MarshalJSON() ([]byte, error) {
 		enc.CommonName = &n.CommonName
 	}
 	attrs := n.ToRDNSequence()
-	zlog.Info(len(attrs))
 	for _, attrSet := range attrs {
 		attrs := []AttributeTypeAndValue(attrSet)
 		for _, a := range attrs {

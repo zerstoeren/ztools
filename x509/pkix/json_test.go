@@ -26,15 +26,19 @@ func (s *JSONSuite) SetUpTest(c *C) {
 	s.name.Province = []string{"MI"}
 }
 
-func (s *JSONSuite) TestEncodeName(c *C) {
-	var b []byte
+func (s *JSONSuite) TestEncodeDecodeName(c *C) {
+	var encoded, reencoded []byte
 	var err error
-	b, err = json.Marshal(s.name)
+	encoded, err = json.Marshal(s.name)
 	c.Assert(err, IsNil)
-	zlog.Info(string(b))
+	zlog.Info(string(encoded))
 	var dec jsonName
-	err = json.Unmarshal(b, &dec)
+	err = json.Unmarshal(encoded, &dec)
 	c.Assert(err, IsNil)
 	c.Assert(dec.CommonName, NotNil)
 	c.Check(*dec.CommonName, Equals, s.name.CommonName)
+	reencoded, err = json.Marshal(&dec)
+	c.Assert(err, IsNil)
+	zlog.Info(string(reencoded))
+	c.Check(reencoded, DeepEquals, encoded)
 }
