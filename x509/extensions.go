@@ -100,6 +100,14 @@ type ExtendedKeyUsage []ExtKeyUsage
 
 type CertificatePolicies []asn1.ObjectIdentifier
 
+func (cp CertificatePolicies) MarshalJSON() ([]byte, error) {
+	out := make([]string, len(cp))
+	for idx, oid := range cp {
+		out[idx] = oid.String()
+	}
+	return json.Marshal(out)
+}
+
 // TODO pull out other types
 type AuthorityInfoAccess struct {
 	OCSPServer            []string `json:"ocsp_urls,omitempty"`
