@@ -1,6 +1,7 @@
 package pkix
 
 import (
+	"encoding/asn1"
 	"encoding/json"
 	"fmt"
 	"testing"
@@ -12,8 +13,9 @@ import (
 func TestJSON(t *testing.T) { TestingT(t) }
 
 type JSONSuite struct {
-	name *Name
-	ext  *Extension
+	name             *Name
+	ext              *Extension
+	unknownAttribute AttributeTypeAndValue
 }
 
 var _ = Suite(&JSONSuite{})
@@ -31,11 +33,15 @@ func (s *JSONSuite) SetUpTest(c *C) {
 	s.ext.Id = oidCommonName
 	s.ext.Critical = true
 	s.ext.Value = []byte{1, 2, 3, 4, 5, 6, 7, 8}
+
+	s.unknownAttribute.Type = asn1.ObjectIdentifier{1, 2, 3, 4}
+	s.unknownAttribute.Value = "this is an unknown extension"
 }
 
 func (s *JSONSuite) TestEncodeDecodeName(c *C) {
 	var encoded []byte
 	var err error
+	s.name.ExtraNames = append(s.name.Names, s.unknownAttribute)
 	encoded, err = json.Marshal(s.name)
 	c.Assert(err, IsNil)
 	zlog.Info(string(encoded))

@@ -20,10 +20,30 @@ type jsonName struct {
 	UnknownAttributes  []AttributeTypeAndValue `json:"unknown_attributes,omitempty"`
 }
 
-type jsonExtension Extension
+type jsonAttributeTypeAndValue struct {
+	Type  string      `json:"type"`
+	Value interface{} `json:"value"`
+}
+
+func (a *AttributeTypeAndValue) MarshalJSON() ([]byte, error) {
+	var enc jsonAttributeTypeAndValue
+	enc.Type = a.Type.String()
+	enc.Value = a.Value
+	return json.Marshal(&enc)
+}
+
+type jsonExtension struct {
+	Id       string `json:"id"`
+	Critical bool   `json:"critical"`
+	Value    []byte `json:"value"`
+}
 
 func (e *Extension) MarshalJSON() ([]byte, error) {
-	ext := jsonExtension(*e)
+	ext := jsonExtension{
+		Id:       e.Id.String(),
+		Critical: e.Critical,
+		Value:    e.Value,
+	}
 	return json.Marshal(ext)
 }
 
