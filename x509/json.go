@@ -90,7 +90,7 @@ func (c *Certificate) MarshalJSON() ([]byte, error) {
 	case RSA:
 		rsaKey, ok := c.PublicKey.(*rsa.PublicKey)
 		if ok {
-			keyMap["modulus"] = rsaKey.N
+			keyMap["modulus"] = rsaKey.N.Bytes()
 			keyMap["exponent"] = rsaKey.E
 		}
 	case DSA:

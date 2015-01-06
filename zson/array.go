@@ -45,3 +45,16 @@ func (s *StringOrArray) UnmarshalJSON(b []byte) error {
 	}
 	return nil
 }
+
+func (s *StringOrArray) Empty() bool {
+	if s == nil {
+		return true
+	}
+	if *s == nil {
+		return true
+	}
+	if len(*s) == 0 {
+		return true
+	}
+	return false
+}

@@ -2,6 +2,7 @@ package x509
 
 import (
 	"encoding/asn1"
+	"encoding/json"
 	"net"
 
 	"github.com/zmap/ztools/x509/pkix"
@@ -20,16 +21,57 @@ var (
 )
 
 type CertificateExtensions struct {
-	KeyUsage              KeyUsage              `json:"key_usage,omitempty"`
-	BasicConstraints      BasicConstraints      `json:"basic_constraints,omitempty"`
-	SubjectAltName        SubjectAltName        `json:"subject_alt_name,omitempty"`
-	NameConstriants       *NameConstriants      `json:"name_constraints,omitempty"`
-	CRLDistributionPoints CRLDistributionPoints `json:"crl_distribution_points,omitempty"`
-	AuthKeyId             AuthKeyId             `json:"authority_key_id,omitempty"`
-	ExtendedKeyUsage      ExtendedKeyUsage      `json:"extended_key_usage,omitempty"`
-	CertificatePolicies   CertificatePolicies   `json:"certificate_policies,omitempty"`
-	AuthorityInfoAccess   *AuthorityInfoAccess  `json:"authority_info_access,omitempty"`
-	UnknownExtensions     []pkix.Extension      `json:"unknown_extensions,omitempty"`
+	KeyUsage              KeyUsage
+	BasicConstraints      *BasicConstraints
+	SubjectAltName        *SubjectAltName
+	NameConstriants       *NameConstriants
+	CRLDistributionPoints CRLDistributionPoints
+	AuthKeyId             AuthKeyId
+	ExtendedKeyUsage      ExtendedKeyUsage
+	CertificatePolicies   CertificatePolicies
+	AuthorityInfoAccess   *AuthorityInfoAccess
+	UnknownExtensions     []pkix.Extension
+}
+
+type jsonUnknownExtension struct {
+	Critical bool   `json:"critical"`
+	Value    []byte `json:"value"`
+}
+
+func (ce *CertificateExtensions) MarshalJSON() ([]byte, error) {
+	enc := make(map[string]interface{})
+	if ce.KeyUsage != 0 {
+		enc["key_usage"] = ce.KeyUsage
+	}
+	if ce.BasicConstraints != nil {
+		enc["basic_constraints"] = ce.BasicConstraints
+	}
+	if ce.SubjectAltName != nil {
+		enc["subject_alt_name"] = ce.SubjectAltName
+	}
+	if ce.CRLDistributionPoints != nil {
+		enc["crl_distribution_points"] = ce.CRLDistributionPoints
+	}
+	if ce.AuthKeyId != nil {
+		enc["authority_key_id"] = ce.AuthKeyId
+	}
+	if ce.ExtendedKeyUsage != nil {
+		enc["extended_key_usage"] = ce.ExtendedKeyUsage
+	}
+	if ce.CertificatePolicies != nil {
+		enc["certificate_policies"] = ce.CertificatePolicies
+	}
+	if ce.AuthorityInfoAccess != nil {
+		enc["authority_info_access"] = ce.AuthorityInfoAccess
+	}
+	for _, e := range ce.UnknownExtensions {
+		unk := jsonUnknownExtension{
+			Critical: e.Critical,
+			Value:    e.Value,
+		}
+		enc[e.Id.String()] = unk
+	}
+	return json.Marshal(enc)
 }
 
 type BasicConstraints struct {
@@ -38,9 +80,9 @@ type BasicConstraints struct {
 }
 
 type SubjectAltName struct {
-	DNSNames       []string `json:"dns_names"`
-	EmailAddresses []string `json:"email_addresses"`
-	IPAddresses    []net.IP `json:"ip_addresses"`
+	DNSNames       []string `json:"dns_names,omitempty"`
+	EmailAddresses []string `json:"email_addresses,omitempty"`
+	IPAddresses    []net.IP `json:"ip_addresses,omitempty"`
 }
 
 // TODO: Handle excluded names
@@ -70,12 +112,14 @@ func (c *Certificate) jsonifyExtensions() *CertificateExtensions {
 		if e.Id.Equal(oidExtKeyUsage) {
 			exts.KeyUsage = c.KeyUsage
 		} else if e.Id.Equal(oidExtBasicConstraints) {
+			exts.BasicConstraints = new(BasicConstraints)
 			exts.BasicConstraints.IsCA = c.IsCA
 			if c.MaxPathLen > 0 || c.MaxPathLenZero {
 				exts.BasicConstraints.MaxPathLen = new(int)
 				*exts.BasicConstraints.MaxPathLen = c.MaxPathLen
 			}
 		} else if e.Id.Equal(oidExtSubjectAltName) {
+			exts.SubjectAltName = new(SubjectAltName)
 			exts.SubjectAltName.DNSNames = c.DNSNames
 			exts.SubjectAltName.EmailAddresses = c.EmailAddresses
 			exts.SubjectAltName.IPAddresses = c.IPAddresses

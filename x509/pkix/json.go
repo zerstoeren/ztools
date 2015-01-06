@@ -8,16 +8,52 @@ import (
 )
 
 type jsonName struct {
-	CommonName         zson.StringOrArray      `json:"common_name,omitempty"`
-	SerialNumber       zson.StringOrArray      `json:"serial_number,omitempty"`
-	Country            zson.StringOrArray      `json:"country,omitempty"`
-	Locality           zson.StringOrArray      `json:"locality,omitempty"`
-	Province           zson.StringOrArray      `json:"province,omitempty"`
-	StreetAddress      zson.StringOrArray      `json:"street_address,omitempty"`
-	Organization       zson.StringOrArray      `json:"organization,omitempty"`
-	OrganizationalUnit zson.StringOrArray      `json:"organizational_unit,omitempty"`
-	PostalCode         zson.StringOrArray      `json:"postal_code,omitempty"`
-	UnknownAttributes  []AttributeTypeAndValue `json:"unknown_attributes,omitempty"`
+	CommonName         zson.StringOrArray
+	SerialNumber       zson.StringOrArray
+	Country            zson.StringOrArray
+	Locality           zson.StringOrArray
+	Province           zson.StringOrArray
+	StreetAddress      zson.StringOrArray
+	Organization       zson.StringOrArray
+	OrganizationalUnit zson.StringOrArray
+	PostalCode         zson.StringOrArray
+	UnknownAttributes  []AttributeTypeAndValue
+}
+
+func (jn *jsonName) MarshalJSON() ([]byte, error) {
+	enc := make(map[string]interface{})
+	if !jn.CommonName.Empty() {
+		enc["common_name"] = jn.CommonName
+	}
+	if !jn.SerialNumber.Empty() {
+		enc["serial_number"] = jn.SerialNumber
+
+	}
+	if !jn.Country.Empty() {
+		enc["country"] = jn.Country
+	}
+	if !jn.Locality.Empty() {
+		enc["locality"] = jn.Locality
+	}
+	if !jn.Province.Empty() {
+		enc["province"] = jn.Province
+	}
+	if !jn.StreetAddress.Empty() {
+		enc["street_address"] = jn.StreetAddress
+	}
+	if !jn.Organization.Empty() {
+		enc["organization"] = jn.Organization
+	}
+	if !jn.OrganizationalUnit.Empty() {
+		enc["organizational_unit"] = jn.OrganizationalUnit
+	}
+	if !jn.PostalCode.Empty() {
+		enc["postal_code"] = jn.PostalCode
+	}
+	for _, a := range jn.UnknownAttributes {
+		enc[a.Type.String()] = a.Value
+	}
+	return json.Marshal(enc)
 }
 
 type jsonAttributeTypeAndValue struct {
@@ -77,5 +113,5 @@ func (n *Name) MarshalJSON() ([]byte, error) {
 			}
 		}
 	}
-	return json.Marshal(enc)
+	return json.Marshal(&enc)
 }
