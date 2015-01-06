@@ -50,13 +50,14 @@ func (jv *jsonValidity) MarshalJSON() ([]byte, error) {
 }
 
 type jsonTBSCertificate struct {
-	Version            int                `json:"version"`
-	SerialNumber       *big.Int           `json:"serial_number"`
-	SignatureAlgorithm SignatureAlgorithm `json:"signature_algorithm"`
-	Issuer             pkix.Name          `json:"issuer"`
-	Validity           jsonValidity       `json:"validity"`
-	Subject            pkix.Name          `json:"subject"`
-	SubjectKeyInfo     jsonSubjectKeyInfo `json:"subject_key_info"`
+	Version            int                    `json:"version"`
+	SerialNumber       *big.Int               `json:"serial_number"`
+	SignatureAlgorithm SignatureAlgorithm     `json:"signature_algorithm"`
+	Issuer             pkix.Name              `json:"issuer"`
+	Validity           jsonValidity           `json:"validity"`
+	Subject            pkix.Name              `json:"subject"`
+	SubjectKeyInfo     jsonSubjectKeyInfo     `json:"subject_key_info"`
+	Extensions         *CertificateExtensions `json:"extensions"`
 }
 
 type jsonSignature struct {
@@ -114,6 +115,8 @@ func (c *Certificate) MarshalJSON() ([]byte, error) {
 		}
 	}
 	jc.Certificate.SubjectKeyInfo.PublicKey = keyMap
+	jc.Certificate.Extensions = c.jsonifyExtensions()
+
 	// TODO: Handle the fact this might not match
 	jc.SignatureAlgorithm = c.SignatureAlgorithm
 	jc.Signature.Value = c.Signature

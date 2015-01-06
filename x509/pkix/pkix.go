@@ -40,9 +40,9 @@ type AttributeTypeAndValueSET struct {
 // Extension represents the ASN.1 structure of the same name. See RFC
 // 5280, section 4.2.
 type Extension struct {
-	Id       asn1.ObjectIdentifier
-	Critical bool `asn1:"optional"`
-	Value    []byte
+	Id       asn1.ObjectIdentifier `json:"id"`
+	Critical bool                  `asn1:"optional"json:"critical"`
+	Value    []byte                `json:"value"`
 }
 
 // Name represents an X.509 distinguished name. This only includes the common

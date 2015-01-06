@@ -2,6 +2,7 @@ package pkix
 
 import (
 	"encoding/json"
+	"fmt"
 	"testing"
 
 	"github.com/zmap/ztools/zlog"
@@ -12,6 +13,7 @@ func TestJSON(t *testing.T) { TestingT(t) }
 
 type JSONSuite struct {
 	name *Name
+	ext  *Extension
 }
 
 var _ = Suite(&JSONSuite{})
@@ -24,6 +26,11 @@ func (s *JSONSuite) SetUpTest(c *C) {
 	s.name.Organization = []string{"University of Michigan"}
 	s.name.Locality = []string{"Ann Arbor"}
 	s.name.Province = []string{"MI"}
+
+	s.ext = new(Extension)
+	s.ext.Id = oidCommonName
+	s.ext.Critical = true
+	s.ext.Value = []byte{1, 2, 3, 4, 5, 6, 7, 8}
 }
 
 func (s *JSONSuite) TestEncodeDecodeName(c *C) {
@@ -41,4 +48,10 @@ func (s *JSONSuite) TestEncodeDecodeName(c *C) {
 	c.Assert(err, IsNil)
 	zlog.Info(string(reencoded))
 	c.Check(reencoded, DeepEquals, encoded)
+}
+
+func (s *JSONSuite) TestEncodeDecodeExtension(c *C) {
+	b, err := json.Marshal(s.ext)
+	c.Assert(err, IsNil)
+	fmt.Println(string(b))
 }

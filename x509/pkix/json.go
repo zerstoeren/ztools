@@ -112,6 +112,13 @@ func fromJSONAttribute(ja jsonAttribute) (a AttributeTypeAndValue) {
 	return
 }
 
+type jsonExtension Extension
+
+func (e *Extension) MarshalJSON() ([]byte, error) {
+	ext := jsonExtension(*e)
+	return json.Marshal(ext)
+}
+
 func (n *Name) MarshalJSON() ([]byte, error) {
 	var enc jsonName
 	if n.CommonName != "" {
