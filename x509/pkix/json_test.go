@@ -23,7 +23,7 @@ func (s *JSONSuite) SetUpTest(c *C) {
 	s.name.CommonName = "davidadrian.org"
 	s.name.SerialNumber = "12345678910"
 	s.name.Country = []string{"US"}
-	s.name.Organization = []string{"University of Michigan"}
+	s.name.Organization = []string{"University of Michigan", "Computer Science Department"}
 	s.name.Locality = []string{"Ann Arbor"}
 	s.name.Province = []string{"MI"}
 
@@ -34,20 +34,11 @@ func (s *JSONSuite) SetUpTest(c *C) {
 }
 
 func (s *JSONSuite) TestEncodeDecodeName(c *C) {
-	var encoded, reencoded []byte
+	var encoded []byte
 	var err error
 	encoded, err = json.Marshal(s.name)
 	c.Assert(err, IsNil)
 	zlog.Info(string(encoded))
-	var dec jsonName
-	err = json.Unmarshal(encoded, &dec)
-	c.Assert(err, IsNil)
-	c.Assert(dec.CommonName, NotNil)
-	c.Check(*dec.CommonName, Equals, s.name.CommonName)
-	reencoded, err = json.Marshal(&dec)
-	c.Assert(err, IsNil)
-	zlog.Info(string(reencoded))
-	c.Check(reencoded, DeepEquals, encoded)
 }
 
 func (s *JSONSuite) TestEncodeDecodeExtension(c *C) {
