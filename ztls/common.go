@@ -8,13 +8,14 @@ import (
 	"container/list"
 	"crypto"
 	"crypto/rand"
-	"crypto/x509"
 	"fmt"
 	"io"
 	"math/big"
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/zmap/ztools/x509"
 )
 
 const (

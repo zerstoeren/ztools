@@ -9,11 +9,12 @@ import (
 	"crypto/ecdsa"
 	"crypto/rsa"
 	"crypto/subtle"
-	"crypto/x509"
 	"encoding/asn1"
 	"errors"
 	"fmt"
 	"io"
+
+	"github.com/zmap/ztools/x509"
 )
 
 // serverHandshakeState contains details of a server handshake in progress.

@@ -9,13 +9,14 @@ import (
 	"crypto/ecdsa"
 	"crypto/rsa"
 	"crypto/subtle"
-	"crypto/x509"
 	"encoding/asn1"
 	"errors"
 	"fmt"
 	"io"
 	"net"
 	"strconv"
+
+	"github.com/zmap/ztools/x509"
 )
 
 type clientHandshakeState struct {
@@ -50,8 +51,8 @@ func (c *Conn) clientHandshake() error {
 		supportedPoints:     []uint8{pointFormatUncompressed},
 		nextProtoNeg:        len(c.config.NextProtos) > 0,
 		secureRenegotiation: true,
-		heartbeatEnabled: true,
-		heartbeatMode: heartbeatModePeerAllowed,
+		heartbeatEnabled:    true,
+		heartbeatMode:       heartbeatModePeerAllowed,
 	}
 
 	possibleCipherSuites := c.config.cipherSuites()
@@ -240,7 +241,6 @@ func (hs *clientHandshakeState) doFullHandshake() error {
 		cert, err := x509.ParseCertificate(asn1Data)
 		if err != nil {
 			invalidCert = true
-			c.handshakeLog.ServerCertificates.ValidationError = err
 			break
 		}
 		certs[i] = cert
@@ -267,16 +267,7 @@ func (hs *clientHandshakeState) doFullHandshake() error {
 			opts.Intermediates.AddCert(cert)
 		}
 		c.verifiedChains, err = certs[0].Verify(opts)
-		if err == nil {
-			c.handshakeLog.ServerCertificates.Valid = true
-		} else {
-			c.handshakeLog.ServerCertificates.ValidationError = err
-		}
-
-		// Log the certificate information regardless of the validity of the chain
-		c.handshakeLog.ServerCertificates.CommonName = certs[0].Subject.CommonName
-		c.handshakeLog.ServerCertificates.AltNames = certs[0].DNSNames
-		c.handshakeLog.ServerCertificates.Issuer = certs[0].Issuer.CommonName
+		c.handshakeLog.ServerCertificates.ParsedCertificate = certs[0]
 
 		// If actually verifying and invalid, reject
 		if !c.config.InsecureSkipVerify {

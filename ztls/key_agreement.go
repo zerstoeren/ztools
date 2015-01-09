@@ -12,11 +12,12 @@ import (
 	"crypto/rsa"
 	"crypto/sha1"
 	"crypto/sha256"
-	"crypto/x509"
 	"encoding/asn1"
 	"errors"
 	"io"
 	"math/big"
+
+	"github.com/zmap/ztools/x509"
 )
 
 var errClientKeyExchange = errors.New("tls: invalid ClientKeyExchange message")

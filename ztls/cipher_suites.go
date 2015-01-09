@@ -11,8 +11,9 @@ import (
 	"crypto/hmac"
 	"crypto/rc4"
 	"crypto/sha1"
-	"crypto/x509"
 	"hash"
+
+	"github.com/zmap/ztools/x509"
 )
 
 // a keyAgreement implements the client and server side of a TLS key agreement

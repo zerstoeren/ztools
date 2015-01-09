@@ -10,13 +10,14 @@ import (
 	"bytes"
 	"crypto/cipher"
 	"crypto/subtle"
-	"crypto/x509"
 	"errors"
 	"fmt"
 	"io"
 	"net"
 	"sync"
 	"time"
+
+	"github.com/zmap/ztools/x509"
 )
 
 // A Conn represents a secured connection.

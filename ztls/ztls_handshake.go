@@ -1,5 +1,9 @@
 package ztls
 
+import (
+	"github.com/zmap/ztools/x509"
+)
+
 type ServerHello struct {
 	Version             uint16 `json:"version"`
 	Random              []byte `json:"random"`
@@ -15,12 +19,8 @@ type ServerHello struct {
 // ServerCertificates represents a TLS certificates message in a format friendly to the golang JSON library.
 // ValidationError should be non-nil whenever Valid is false.
 type Certificates struct {
-	Certificates    [][]byte
-	Valid           bool
-	ValidationError error
-	CommonName      string
-	AltNames        []string
-	Issuer          string
+	Certificates      [][]byte
+	ParsedCertificate *x509.Certificate
 }
 
 // ServerKeyExchange represents the raw key data sent by the server in TLS key exchange message

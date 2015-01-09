@@ -6,7 +6,9 @@ package ztls_test
 
 import (
 	"crypto/tls"
-	"crypto/x509"
+
+	"github.com/zmap/ztools/x509"
+	"github.com/zmap/ztools/ztls"
 )
 
 func ExampleDial() {
@@ -47,7 +49,7 @@ yuGnBXj8ytqU0CwIPX4WecigUCAkVDNx
 		panic("failed to parse root certificate")
 	}
 
-	conn, err := tls.Dial("tcp", "mail.google.com:443", &tls.Config{
+	conn, err := ztls.Dial("tcp", "mail.google.com:443", &tls.Config{
 		RootCAs: roots,
 	})
 	if err != nil {

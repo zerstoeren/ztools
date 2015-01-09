@@ -8,7 +8,6 @@ import (
 	"bytes"
 	"crypto/ecdsa"
 	"crypto/rsa"
-	"crypto/x509"
 	"encoding/pem"
 	"fmt"
 	"io"
@@ -19,6 +18,8 @@ import (
 	"strconv"
 	"testing"
 	"time"
+
+	"github.com/zmap/ztools/x509"
 )
 
 // Note: see comment in handshake_test.go for details of how the reference

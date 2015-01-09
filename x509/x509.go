@@ -548,7 +548,7 @@ type Certificate struct {
 
 	// Internal
 	valid         bool
-	matchesDomain bool
+	matchesDomain *bool
 }
 
 // ErrUnsupportedAlgorithm results from attempting to perform an operation that

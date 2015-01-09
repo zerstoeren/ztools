@@ -210,9 +210,17 @@ func (c *Certificate) isValid(certType int, currentChain []*Certificate, opts *V
 //
 // WARNING: this doesn't do any revocation checking.
 func (c *Certificate) Verify(opts VerifyOptions) (chains [][]*Certificate, err error) {
+	chains, err = c.doVerify(opts)
+	if err == nil {
+		c.valid = true
+	}
+	return
+}
+
+func (c *Certificate) doVerify(opts VerifyOptions) (chains [][]*Certificate, err error) {
 	// Use Windows's own verification and chain building.
 	if opts.Roots == nil && runtime.GOOS == "windows" {
-		return c.systemVerify(&opts)
+		chains, err = c.systemVerify(&opts)
 	}
 
 	if opts.Roots == nil {

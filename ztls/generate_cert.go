@@ -12,8 +12,10 @@ package main
 import (
 	"crypto/rand"
 	"crypto/rsa"
-	"crypto/x509"
-	"crypto/x509/pkix"
+
+	"github.com/zmap/ztools/x509"
+	"github.com/zmap/ztools/x509/pkix"
+
 	"encoding/pem"
 	"flag"
 	"fmt"

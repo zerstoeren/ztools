@@ -9,13 +9,14 @@ import (
 	"crypto"
 	"crypto/ecdsa"
 	"crypto/rsa"
-	"crypto/x509"
 	"encoding/pem"
 	"errors"
 	"io/ioutil"
 	"net"
 	"strings"
 	"time"
+
+	"github.com/zmap/ztools/x509"
 )
 
 // Server returns a new TLS server side connection
