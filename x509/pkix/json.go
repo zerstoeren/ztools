@@ -3,7 +3,6 @@ package pkix
 import (
 	"encoding/json"
 
-	"github.com/zmap/ztools/zlog"
 	"github.com/zmap/ztools/zson"
 )
 
@@ -88,7 +87,6 @@ func (n *Name) MarshalJSON() ([]byte, error) {
 	attrs := n.ToRDNSequence()
 	for _, attrSet := range attrs {
 		for _, a := range attrSet {
-			zlog.Debug(a)
 			s, _ := a.Value.(string)
 			if a.Type.Equal(oidCommonName) {
 				enc.CommonName = append(enc.CommonName, s)
