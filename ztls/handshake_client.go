@@ -246,11 +246,6 @@ func (hs *clientHandshakeState) doFullHandshake() error {
 		certs[i] = cert
 	}
 
-	if !c.config.InsecureSkipVerify && invalidCert {
-		c.sendAlert(alertBadCertificate)
-		return errors.New("tls: failed to parse certificate from server: " + err.Error())
-	}
-
 	if !invalidCert {
 		opts := x509.VerifyOptions{
 			Roots:         c.config.RootCAs,
@@ -276,6 +271,11 @@ func (hs *clientHandshakeState) doFullHandshake() error {
 				return err
 			}
 		}
+	}
+
+	if invalidCert {
+		c.sendAlert(alertBadCertificate)
+		return errors.New("tls: failed to parse certificate from server: " + err.Error())
 	}
 
 	switch certs[0].PublicKey.(type) {
