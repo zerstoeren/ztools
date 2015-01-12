@@ -237,10 +237,12 @@ func (hs *clientHandshakeState) doFullHandshake() error {
 
 	certs := make([]*x509.Certificate, len(certMsg.certificates))
 	invalidCert := false
+	var invalidCertErr error
 	for i, asn1Data := range certMsg.certificates {
 		cert, err := x509.ParseCertificate(asn1Data)
 		if err != nil {
 			invalidCert = true
+			invalidCertErr = err
 			break
 		}
 		certs[i] = cert
@@ -275,7 +277,7 @@ func (hs *clientHandshakeState) doFullHandshake() error {
 
 	if invalidCert {
 		c.sendAlert(alertBadCertificate)
-		return errors.New("tls: failed to parse certificate from server: " + err.Error())
+		return errors.New("tls: failed to parse certificate from server: " + invalidCertErr.Error())
 	}
 
 	switch certs[0].PublicKey.(type) {
