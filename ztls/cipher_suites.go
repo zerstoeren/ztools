@@ -282,3 +282,8 @@ var CBCSuiteIDList []uint16 = []uint16{
 	TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,
 	TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA,
 }
+
+var SChannelSuites []uint16 = []uint16{
+	TLS_RSA_WITH_AES_128_GCM_SHA256,
+	TLS_RSA_WITH_RC4_128_SHA,
+}
