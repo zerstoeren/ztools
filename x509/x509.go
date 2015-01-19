@@ -547,8 +547,9 @@ type Certificate struct {
 	PolicyIdentifiers []asn1.ObjectIdentifier
 
 	// Internal
-	valid         bool
-	matchesDomain *bool
+	valid           bool
+	validationError error
+	matchesDomain   *bool
 }
 
 // ErrUnsupportedAlgorithm results from attempting to perform an operation that

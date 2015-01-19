@@ -214,6 +214,7 @@ func (c *Certificate) Verify(opts VerifyOptions) (chains [][]*Certificate, err e
 	if err == nil {
 		c.valid = true
 	}
+	c.validationError = err
 	return
 }
 
