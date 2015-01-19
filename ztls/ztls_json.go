@@ -8,7 +8,7 @@ import (
 
 type encodedCertificates struct {
 	Certificates      [][]byte          `json:"certificates"`
-	ParsedCertificate *x509.Certificate `json:"parsed_certificate"`
+	ParsedCertificate *x509.Certificate `json:"parsed"`
 }
 
 func (ec *encodedCertificates) FromZTLS(c *Certificates) *encodedCertificates {
