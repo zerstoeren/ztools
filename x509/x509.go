@@ -176,6 +176,7 @@ var signatureAlgorithmNames = []string{
 	"MD2WithRSA",
 	"MD5WithRSA",
 	"SHA1WithRSA",
+	"SHA256WithRSA",
 	"SHA384WithRSA",
 	"SHA512WithRSA",
 	"DSAWithSHA1",
