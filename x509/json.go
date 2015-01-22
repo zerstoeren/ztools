@@ -69,9 +69,12 @@ type jsonSignature struct {
 }
 
 type jsonCertificate struct {
-	Certificate        jsonTBSCertificate `json:"certificate"`
-	SignatureAlgorithm SignatureAlgorithm `json:"signature_algorithm"`
-	Signature          jsonSignature      `json:"signature"`
+	Certificate        jsonTBSCertificate     `json:"certificate"`
+	SignatureAlgorithm SignatureAlgorithm     `json:"signature_algorithm"`
+	Signature          jsonSignature          `json:"signature"`
+	FingerprintMD5     CertificateFingerprint `json:"fingerprint_md5"`
+	FingerprintSHA1    CertificateFingerprint `json:"fingerprint_sha1"`
+	FingerprintSHA256  CertificateFingerprint `json:"fingerprint_sha256"`
 }
 
 func (c *Certificate) MarshalJSON() ([]byte, error) {
@@ -128,5 +131,8 @@ func (c *Certificate) MarshalJSON() ([]byte, error) {
 	if c.Subject.CommonName == c.Issuer.CommonName {
 		jc.Signature.SelfSigned = true
 	}
+	jc.FingerprintMD5 = c.FingerprintMD5
+	jc.FingerprintSHA1 = c.FingerprintSHA1
+	jc.FingerprintSHA256 = c.FingerprintSHA256
 	return json.Marshal(jc)
 }

@@ -28,7 +28,9 @@ func Process(in Decoder, out Encoder, w Worker, workers uint) {
 	// Start the output encoder
 	go func() {
 		for result := range outputQueue {
-			out.Encode(result)
+			if err := out.Encode(result); err != nil {
+				panic(err.Error())
+			}
 		}
 		outputDone <- 1
 	}()

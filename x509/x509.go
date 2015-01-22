@@ -11,11 +11,13 @@ import (
 	"crypto/dsa"
 	"crypto/ecdsa"
 	"crypto/elliptic"
+	"crypto/md5"
 	"crypto/rsa"
 	"crypto/sha1"
-	_ "crypto/sha256"
-	_ "crypto/sha512"
+	"crypto/sha256"
 	"encoding/asn1"
+	"encoding/hex"
+	"encoding/json"
 	"encoding/pem"
 	"errors"
 	"io"
@@ -547,10 +549,21 @@ type Certificate struct {
 
 	PolicyIdentifiers []asn1.ObjectIdentifier
 
+	// Fingerprints
+	FingerprintMD5    CertificateFingerprint
+	FingerprintSHA1   CertificateFingerprint
+	FingerprintSHA256 CertificateFingerprint
+
 	// Internal
 	valid           bool
 	validationError error
 	matchesDomain   *bool
+}
+
+type CertificateFingerprint []byte
+
+func (f *CertificateFingerprint) MarshalJSON() ([]byte, error) {
+	return json.Marshal(hex.EncodeToString(*f))
 }
 
 // ErrUnsupportedAlgorithm results from attempting to perform an operation that
@@ -886,6 +899,18 @@ func parseCertificate(in *certificate) (*Certificate, error) {
 	out.RawSubjectPublicKeyInfo = in.TBSCertificate.PublicKey.Raw
 	out.RawSubject = in.TBSCertificate.Subject.FullBytes
 	out.RawIssuer = in.TBSCertificate.Issuer.FullBytes
+
+	// MD5 Fingerprint
+	md5sum := md5.Sum(in.Raw)
+	out.FingerprintMD5 = md5sum[:]
+
+	// SHA1 Fingerprint
+	sha1Print := sha1.Sum(in.Raw)
+	out.FingerprintSHA1 = sha1Print[:]
+
+	// SHA256 Fingerprint
+	sha256Print := sha256.Sum256(in.Raw)
+	out.FingerprintSHA256 = sha256Print[:]
 
 	out.Signature = in.SignatureValue.RightAlign()
 	out.SignatureAlgorithm =
