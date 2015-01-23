@@ -15,6 +15,7 @@ import (
 	"crypto/rsa"
 	"crypto/sha1"
 	"crypto/sha256"
+	_ "crypto/sha512"
 	"encoding/asn1"
 	"encoding/hex"
 	"encoding/json"
