@@ -12,7 +12,7 @@ type ServerHello struct {
 	CompressionMethod   uint8  `json:"compression_method"`
 	OcspStapling        bool   `json:"ocsp_stapling"`
 	TicketSupported     bool   `json:"ticket"`
-	SecureRenogotiation bool   `json:"secure_renogotiation"`
+	SecureRenegotiation bool   `json:"secure_renegotiation"`
 	HeartbeatSupported  bool   `json:"heartbeat"`
 }
 
@@ -57,7 +57,7 @@ func (m *serverHelloMsg) MakeLog() *ServerHello {
 	sh.CompressionMethod = m.compressionMethod
 	sh.OcspStapling = m.ocspStapling
 	sh.TicketSupported = m.ticketSupported
-	sh.SecureRenogotiation = m.secureRenegotiation
+	sh.SecureRenegotiation = m.secureRenegotiation
 	sh.HeartbeatSupported = m.heartbeatEnabled
 	return sh
 }
