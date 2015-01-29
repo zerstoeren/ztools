@@ -19,8 +19,8 @@ type ServerHello struct {
 // ServerCertificates represents a TLS certificates message in a format friendly to the golang JSON library.
 // ValidationError should be non-nil whenever Valid is false.
 type Certificates struct {
-	Certificates      [][]byte
-	ParsedCertificate *x509.Certificate
+	Certificates       [][]byte
+	ParsedCertificates []*x509.Certificate
 }
 
 // ServerKeyExchange represents the raw key data sent by the server in TLS key exchange message

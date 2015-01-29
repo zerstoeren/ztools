@@ -7,13 +7,17 @@ import (
 )
 
 type encodedCertificates struct {
-	Certificates      [][]byte          `json:"certificates"`
-	ParsedCertificate *x509.Certificate `json:"parsed"`
+	Certificates       [][]byte            `json:"raw"`
+	ParsedCertificate  *x509.Certificate   `json:"certificate"`
+	ParsedCertificates []*x509.Certificate `json:"chain"`
 }
 
 func (ec *encodedCertificates) FromZTLS(c *Certificates) *encodedCertificates {
 	ec.Certificates = c.Certificates
-	ec.ParsedCertificate = c.ParsedCertificate
+	ec.ParsedCertificate = c.ParsedCertificates[0]
+	if len(c.ParsedCertificates) > 1 {
+		ec.ParsedCertificates = c.ParsedCertificates[1:]
+	}
 	return ec
 }
 
