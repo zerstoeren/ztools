@@ -6,6 +6,8 @@ package ztls
 
 import "bytes"
 
+type CipherSuite uint16
+
 type clientHelloMsg struct {
 	raw                 []byte
 	vers                uint16
@@ -448,8 +450,8 @@ type serverHelloMsg struct {
 	ocspStapling        bool
 	ticketSupported     bool
 	secureRenegotiation bool
-	heartbeatEnabled bool
-	heartbeatMode uint8
+	heartbeatEnabled    bool
+	heartbeatMode       uint8
 }
 
 func (m *serverHelloMsg) equal(i interface{}) bool {

@@ -5,15 +5,15 @@ import (
 )
 
 type ServerHello struct {
-	Version             uint16 `json:"version"`
-	Random              []byte `json:"random"`
-	SessionID           []byte `json:"session_id"`
-	CipherSuite         uint16 `json:"cipher_suite"`
-	CompressionMethod   uint8  `json:"compression_method"`
-	OcspStapling        bool   `json:"ocsp_stapling"`
-	TicketSupported     bool   `json:"ticket"`
-	SecureRenegotiation bool   `json:"secure_renegotiation"`
-	HeartbeatSupported  bool   `json:"heartbeat"`
+	Version             uint16      `json:"version"`
+	Random              []byte      `json:"random"`
+	SessionID           []byte      `json:"session_id"`
+	CipherSuite         CipherSuite `json:"cipher_suite"`
+	CompressionMethod   uint8       `json:"compression_method"`
+	OcspStapling        bool        `json:"ocsp_stapling"`
+	TicketSupported     bool        `json:"ticket"`
+	SecureRenegotiation bool        `json:"secure_renegotiation"`
+	HeartbeatSupported  bool        `json:"heartbeat"`
 }
 
 // ServerCertificates represents a TLS certificates message in a format friendly to the golang JSON library.
@@ -53,7 +53,7 @@ func (m *serverHelloMsg) MakeLog() *ServerHello {
 	copy(sh.Random, m.random)
 	sh.SessionID = make([]byte, len(m.sessionId))
 	copy(sh.SessionID, m.sessionId)
-	sh.CipherSuite = m.cipherSuite
+	sh.CipherSuite = CipherSuite(m.cipherSuite)
 	sh.CompressionMethod = m.compressionMethod
 	sh.OcspStapling = m.ocspStapling
 	sh.TicketSupported = m.ticketSupported
