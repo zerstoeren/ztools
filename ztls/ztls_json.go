@@ -17,7 +17,9 @@ type encodedCertificates struct {
 
 func (ec *encodedCertificates) FromZTLS(c *Certificates) *encodedCertificates {
 	ec.Certificates = c.Certificates
-	ec.ParsedCertificate = c.ParsedCertificates[0]
+	if len(c.ParsedCertificates) > 0 {
+		ec.ParsedCertificate = c.ParsedCertificates[0]
+	}
 	if len(c.ParsedCertificates) > 1 {
 		ec.ParsedCertificates = c.ParsedCertificates[1:]
 	}
