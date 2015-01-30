@@ -2,6 +2,7 @@ package x509
 
 import (
 	"encoding/asn1"
+	"encoding/hex"
 	"encoding/json"
 	"net"
 
@@ -95,6 +96,11 @@ type NameConstriants struct {
 type CRLDistributionPoints []string
 
 type AuthKeyId []byte
+
+func (akid AuthKeyId) MarshalJSON() ([]byte, error) {
+	enc := hex.EncodeToString(akid)
+	return json.Marshal(enc)
+}
 
 type ExtendedKeyUsage []ExtKeyUsage
 
