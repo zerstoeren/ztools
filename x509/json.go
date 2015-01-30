@@ -20,14 +20,12 @@ func (s SignatureAlgorithm) MarshalJSON() ([]byte, error) {
 	return json.Marshal(name)
 }
 
-func (p *PublicKeyAlgorithm) MarshalJSON() ([]byte, error) {
-	algorithm := *p
-	if algorithm >= total_key_algorithms || algorithm < 0 {
-		algorithm = 0
+func (p PublicKeyAlgorithm) MarshalJSON() ([]byte, error) {
+	if p >= total_key_algorithms || p < 0 {
+		p = 0
 	}
-	name := keyAlgorithmNames[algorithm]
-	out := fmt.Sprintf(`{"id":%d,"name":"%s"}`, *p, name)
-	return []byte(out), nil
+	name := keyAlgorithmNames[p]
+	return json.Marshal(name)
 }
 
 type jsonValidity struct {
@@ -36,7 +34,7 @@ type jsonValidity struct {
 }
 
 type jsonSubjectKeyInfo struct {
-	KeyAlgorithm PublicKeyAlgorithm     `json:"key_algorithm"`
+	KeyAlgorithm interface{}            `json:"key_algorithm"`
 	PublicKey    map[string]interface{} `json:"public_key"`
 }
 
@@ -76,6 +74,7 @@ type jsonCertificate struct {
 }
 
 func (c *Certificate) MarshalJSON() ([]byte, error) {
+	// Do some name mangling for pretty output
 	var algorithm interface{}
 	switch c.SignatureAlgorithm {
 	case UnknownSignatureAlgorithm:
@@ -83,6 +82,14 @@ func (c *Certificate) MarshalJSON() ([]byte, error) {
 	default:
 		algorithm = c.SignatureAlgorithm
 	}
+	var key interface{}
+	switch c.PublicKeyAlgorithm {
+	case UnknownPublicKeyAlgorithm:
+		key = c.PublicKeyAlgorithmOID.String()
+	default:
+		key = c.PublicKeyAlgorithm
+	}
+	// Fill out the certificate
 	jc := new(jsonCertificate)
 	jc.Certificate.Version = c.Version
 	jc.Certificate.SerialNumber = c.SerialNumber
@@ -91,7 +98,7 @@ func (c *Certificate) MarshalJSON() ([]byte, error) {
 	jc.Certificate.Validity.NotBefore = c.NotBefore
 	jc.Certificate.Validity.NotAfter = c.NotAfter
 	jc.Certificate.Subject = c.Subject
-	jc.Certificate.SubjectKeyInfo.KeyAlgorithm = c.PublicKeyAlgorithm
+	jc.Certificate.SubjectKeyInfo.KeyAlgorithm = key
 
 	// Pull out the key
 	keyMap := make(map[string]interface{})

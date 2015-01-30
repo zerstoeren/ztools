@@ -501,6 +501,8 @@ type Certificate struct {
 	PublicKeyAlgorithm PublicKeyAlgorithm
 	PublicKey          interface{}
 
+	PublicKeyAlgorithmOID asn1.ObjectIdentifier
+
 	Version             int
 	SerialNumber        *big.Int
 	Issuer              pkix.Name
@@ -929,6 +931,8 @@ func parseCertificate(in *certificate) (*Certificate, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	out.PublicKeyAlgorithmOID = in.TBSCertificate.PublicKey.Algorithm.Algorithm
 
 	if in.TBSCertificate.SerialNumber.Sign() < 0 {
 		return nil, errors.New("x509: negative serial number")
