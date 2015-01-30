@@ -4,6 +4,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	"github.com/zmap/ztools/x509"
 )
@@ -47,7 +48,7 @@ func (cs CipherSuite) MarshalJSON() ([]byte, error) {
 	buf := make([]byte, 2)
 	buf[0] = byte(cs >> 8)
 	buf[1] = byte(cs)
-	enc := hex.EncodeToString(buf)
+	enc := strings.ToUpper(hex.EncodeToString(buf))
 	s := fmt.Sprintf("\"0x%s\"", enc)
 	return []byte(s), nil
 }

@@ -12,6 +12,39 @@ import (
 	"github.com/zmap/ztools/x509/pkix"
 )
 
+func (k KeyUsage) MarshalJSON() ([]byte, error) {
+	enc := make(map[string]interface{})
+	enc["value"] = int(k)
+	if k&KeyUsageDigitalSignature > 0 {
+		enc["digital_signature"] = true
+	}
+	if k&KeyUsageContentCommitment > 0 {
+		enc["content_commitment"] = true
+	}
+	if k&KeyUsageKeyEncipherment > 0 {
+		enc["key_encipherment"] = true
+	}
+	if k&KeyUsageDataEncipherment > 0 {
+		enc["data_encipherment"] = true
+	}
+	if k&KeyUsageKeyAgreement > 0 {
+		enc["key_agreement"] = true
+	}
+	if k&KeyUsageCertSign > 0 {
+		enc["cert_sign"] = true
+	}
+	if k&KeyUsageCRLSign > 0 {
+		enc["crl_sign"] = true
+	}
+	if k&KeyUsageEncipherOnly > 0 {
+		enc["encipher_only"] = true
+	}
+	if k&KeyUsageDecipherOnly > 0 {
+		enc["decipher_only"] = true
+	}
+	return json.Marshal(enc)
+}
+
 func (s SignatureAlgorithm) MarshalJSON() ([]byte, error) {
 	if s >= total_signature_algorithms || s < 0 {
 		s = UnknownSignatureAlgorithm
