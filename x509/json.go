@@ -12,14 +12,12 @@ import (
 	"github.com/zmap/ztools/x509/pkix"
 )
 
-func (s *SignatureAlgorithm) MarshalJSON() ([]byte, error) {
-	algorithm := *s
-	if algorithm >= total_signature_algorithms || algorithm < 0 {
-		algorithm = UnknownSignatureAlgorithm
+func (s SignatureAlgorithm) MarshalJSON() ([]byte, error) {
+	if s >= total_signature_algorithms || s < 0 {
+		s = UnknownSignatureAlgorithm
 	}
-	name := signatureAlgorithmNames[algorithm]
-	out := fmt.Sprintf(`{"id":%d,"name":"%s"}`, *s, name)
-	return []byte(out), nil
+	name := signatureAlgorithmNames[s]
+	return json.Marshal(name)
 }
 
 func (p *PublicKeyAlgorithm) MarshalJSON() ([]byte, error) {
@@ -52,7 +50,7 @@ func (jv *jsonValidity) MarshalJSON() ([]byte, error) {
 type jsonTBSCertificate struct {
 	Version            int                    `json:"version"`
 	SerialNumber       *big.Int               `json:"serial_number"`
-	SignatureAlgorithm SignatureAlgorithm     `json:"signature_algorithm"`
+	SignatureAlgorithm interface{}            `json:"signature_algorithm"`
 	Issuer             pkix.Name              `json:"issuer"`
 	Validity           jsonValidity           `json:"validity"`
 	Subject            pkix.Name              `json:"subject"`
@@ -70,7 +68,7 @@ type jsonSignature struct {
 
 type jsonCertificate struct {
 	Certificate        jsonTBSCertificate     `json:"certificate"`
-	SignatureAlgorithm SignatureAlgorithm     `json:"signature_algorithm"`
+	SignatureAlgorithm interface{}            `json:"signature_algorithm"`
 	Signature          jsonSignature          `json:"signature"`
 	FingerprintMD5     CertificateFingerprint `json:"fingerprint_md5"`
 	FingerprintSHA1    CertificateFingerprint `json:"fingerprint_sha1"`
@@ -78,10 +76,17 @@ type jsonCertificate struct {
 }
 
 func (c *Certificate) MarshalJSON() ([]byte, error) {
+	var algorithm interface{}
+	switch c.SignatureAlgorithm {
+	case UnknownSignatureAlgorithm:
+		algorithm = c.SignatureAlgorithmOID.String()
+	default:
+		algorithm = c.SignatureAlgorithm
+	}
 	jc := new(jsonCertificate)
 	jc.Certificate.Version = c.Version
 	jc.Certificate.SerialNumber = c.SerialNumber
-	jc.Certificate.SignatureAlgorithm = c.SignatureAlgorithm
+	jc.Certificate.SignatureAlgorithm = algorithm
 	jc.Certificate.Issuer = c.Issuer
 	jc.Certificate.Validity.NotBefore = c.NotBefore
 	jc.Certificate.Validity.NotAfter = c.NotAfter
@@ -122,7 +127,7 @@ func (c *Certificate) MarshalJSON() ([]byte, error) {
 	jc.Certificate.Extensions = c.jsonifyExtensions()
 
 	// TODO: Handle the fact this might not match
-	jc.SignatureAlgorithm = c.SignatureAlgorithm
+	jc.SignatureAlgorithm = algorithm
 	jc.Signature.Value = c.Signature
 	jc.Signature.Valid = c.valid
 	if c.validationError != nil {

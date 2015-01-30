@@ -156,6 +156,7 @@ type authKeyId struct {
 }
 
 type SignatureAlgorithm int
+type SignatureAlgorithmOID asn1.ObjectIdentifier
 
 const (
 	UnknownSignatureAlgorithm SignatureAlgorithm = iota
@@ -494,6 +495,8 @@ type Certificate struct {
 
 	Signature          []byte
 	SignatureAlgorithm SignatureAlgorithm
+
+	SignatureAlgorithmOID asn1.ObjectIdentifier
 
 	PublicKeyAlgorithm PublicKeyAlgorithm
 	PublicKey          interface{}
@@ -916,6 +919,8 @@ func parseCertificate(in *certificate) (*Certificate, error) {
 	out.Signature = in.SignatureValue.RightAlign()
 	out.SignatureAlgorithm =
 		getSignatureAlgorithmFromOID(in.TBSCertificate.SignatureAlgorithm.Algorithm)
+
+	out.SignatureAlgorithmOID = in.TBSCertificate.SignatureAlgorithm.Algorithm
 
 	out.PublicKeyAlgorithm =
 		getPublicKeyAlgorithmFromOID(in.TBSCertificate.PublicKey.Algorithm.Algorithm)
