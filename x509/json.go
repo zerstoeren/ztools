@@ -144,10 +144,10 @@ func (c *Certificate) MarshalJSON() ([]byte, error) {
 	case DSA:
 		dsaKey, ok := c.PublicKey.(*dsa.PublicKey)
 		if ok {
-			keyMap["p"] = dsaKey.P
-			keyMap["q"] = dsaKey.Q
-			keyMap["g"] = dsaKey.G
-			keyMap["y"] = dsaKey.Y
+			keyMap["p"] = dsaKey.P.String()
+			keyMap["q"] = dsaKey.Q.String()
+			keyMap["g"] = dsaKey.G.String()
+			keyMap["y"] = dsaKey.Y.String()
 		}
 	case ECDSA:
 		ecdsaKey, ok := c.PublicKey.(*ecdsa.PublicKey)
