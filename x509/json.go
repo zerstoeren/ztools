@@ -6,7 +6,6 @@ import (
 	"crypto/rsa"
 	"encoding/json"
 	"fmt"
-	"math/big"
 	"time"
 
 	"github.com/zmap/ztools/x509/pkix"
@@ -80,7 +79,7 @@ func (jv *jsonValidity) MarshalJSON() ([]byte, error) {
 
 type jsonTBSCertificate struct {
 	Version            int                    `json:"version"`
-	SerialNumber       *big.Int               `json:"serial_number"`
+	SerialNumber       string                 `json:"serial_number"`
 	SignatureAlgorithm interface{}            `json:"signature_algorithm"`
 	Issuer             pkix.Name              `json:"issuer"`
 	Validity           jsonValidity           `json:"validity"`
@@ -125,7 +124,7 @@ func (c *Certificate) MarshalJSON() ([]byte, error) {
 	// Fill out the certificate
 	jc := new(jsonCertificate)
 	jc.Certificate.Version = c.Version
-	jc.Certificate.SerialNumber = c.SerialNumber
+	jc.Certificate.SerialNumber = c.SerialNumber.String()
 	jc.Certificate.SignatureAlgorithm = algorithm
 	jc.Certificate.Issuer = c.Issuer
 	jc.Certificate.Validity.NotBefore = c.NotBefore
@@ -154,13 +153,13 @@ func (c *Certificate) MarshalJSON() ([]byte, error) {
 		ecdsaKey, ok := c.PublicKey.(*ecdsa.PublicKey)
 		if ok {
 			params := ecdsaKey.Params()
-			keyMap["P"] = params.P
-			keyMap["N"] = params.N
-			keyMap["B"] = params.B
-			keyMap["Gx"] = params.Gx
-			keyMap["Gy"] = params.Gy
-			keyMap["X"] = ecdsaKey.X
-			keyMap["Y"] = ecdsaKey.Y
+			keyMap["P"] = params.P.String()
+			keyMap["N"] = params.N.String()
+			keyMap["B"] = params.B.String()
+			keyMap["Gx"] = params.Gx.String()
+			keyMap["Gy"] = params.Gy.String()
+			keyMap["X"] = ecdsaKey.X.String()
+			keyMap["Y"] = ecdsaKey.Y.String()
 		}
 	}
 	jc.Certificate.SubjectKeyInfo.PublicKey = keyMap
