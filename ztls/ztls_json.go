@@ -51,6 +51,14 @@ func (cs CipherSuite) MarshalJSON() ([]byte, error) {
 	buf[0] = byte(cs >> 8)
 	buf[1] = byte(cs)
 	enc := strings.ToUpper(hex.EncodeToString(buf))
-	s := fmt.Sprintf("\"0x%s\"", enc)
-	return []byte(s), nil
+	m := make(map[string]interface{}, 3)
+	m["hex"] = fmt.Sprintf("0x%s", enc)
+	num := int(cs)
+	if name, ok := cipherSuiteNames[num]; ok {
+		m["name"] = name
+	} else {
+		m["name"] = "UNKNOWN"
+	}
+	m["value"] = num
+	return json.Marshal(m)
 }
