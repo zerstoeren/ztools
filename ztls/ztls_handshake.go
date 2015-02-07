@@ -4,8 +4,10 @@ import (
 	"github.com/zmap/ztools/x509"
 )
 
+type TLSVersion uint16
+
 type ServerHello struct {
-	Version             uint16      `json:"version"`
+	Version             TLSVersion  `json:"version"`
 	Random              []byte      `json:"random"`
 	SessionID           []byte      `json:"session_id"`
 	CipherSuite         CipherSuite `json:"cipher_suite"`
@@ -48,7 +50,7 @@ func (c *Conn) GetHandshakeLog() *ServerHandshake {
 
 func (m *serverHelloMsg) MakeLog() *ServerHello {
 	sh := new(ServerHello)
-	sh.Version = m.vers
+	sh.Version = TLSVersion(m.vers)
 	sh.Random = make([]byte, len(m.random))
 	copy(sh.Random, m.random)
 	sh.SessionID = make([]byte, len(m.sessionId))

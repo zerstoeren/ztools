@@ -140,6 +140,7 @@ func (c *Certificate) MarshalJSON() ([]byte, error) {
 		if ok {
 			keyMap["modulus"] = rsaKey.N.Bytes()
 			keyMap["exponent"] = rsaKey.E
+			keyMap["length"] = rsaKey.N.BitLen()
 		}
 	case DSA:
 		dsaKey, ok := c.PublicKey.(*dsa.PublicKey)
